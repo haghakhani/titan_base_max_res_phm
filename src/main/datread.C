@@ -34,9 +34,9 @@ extern "C" void INITIAL(int*, double*, double*);
 #endif
 
 void Read_data(int myid, MatProps* matprops_ptr, PileProps* pileprops_ptr, StatProps* statprops_ptr,
-    TimeProps* timeprops_ptr, FluxProps* fluxprops, int* adaptflag_ptr, int* viz_flag_ptr,
-    int* order_flag_ptr, MapNames *mapnames_ptr, DISCHARGE* discharge_ptr, OutLine* outline_ptr,
-    int *srctype) {
+		TimeProps* timeprops_ptr, FluxProps* fluxprops, int* adaptflag_ptr, int* viz_flag_ptr,
+		int* order_flag_ptr, MapNames *mapnames_ptr, DISCHARGE* discharge_ptr, OutLine* outline_ptr,
+		int *srctype) {
 	/*************************************************************************/
 	//regular pile info input
 	//read in elliptical (in x-y coordinates) pile info
@@ -121,14 +121,14 @@ void Read_data(int myid, MatProps* matprops_ptr, PileProps* pileprops_ptr, StatP
 	if ((fp = fopen("statin.bed", "r")) != NULL) {
 		ifstatbed = 1;
 		fscanf(fp, "%d%d%lf%lf", &(statprops_ptr->lhs.refnum), &(statprops_ptr->lhs.runid), &statbed,
-		    &statint);
+				&statint);
 		fclose(fp);
 		statbed *= PI / 180.0;
 		statint *= PI / 180.0;
 	} else if ((fp = fopen("statin.vol", "r")) != NULL) {
 		double volumescale;
 		fscanf(fp, "%d%d%lf%lf", &(statprops_ptr->lhs.refnum), &(statprops_ptr->lhs.runid),
-		    &volumescale);
+				&volumescale);
 		fclose(fp);
 		volumescale = pow(volumescale, 1 / 3.0);
 
@@ -167,7 +167,7 @@ void Read_data(int myid, MatProps* matprops_ptr, PileProps* pileprops_ptr, StatP
 			fgets(stringswap, 4096, fp);  //randvar
 			fscanf(fp, "volume=%lf\n", &volume);
 			double vel = sqrt(
-			    fluxprops->xVel[0] * fluxprops->xVel[0] + fluxprops->yVel[0] * fluxprops->yVel[0]);
+					fluxprops->xVel[0] * fluxprops->xVel[0] + fluxprops->yVel[0] * fluxprops->yVel[0]);
 			double vel_angle;
 			fscanf(fp, "direction=%lf\n", &vel_angle);
 			vel_angle *= PI / 180.;
@@ -203,13 +203,13 @@ void Read_data(int myid, MatProps* matprops_ptr, PileProps* pileprops_ptr, StatP
 	if (pileprops_ptr->numpiles > 0)
 		for (isrc = 0; isrc < pileprops_ptr->numpiles; isrc++)
 			totalvolume += 0.5 * PI * pileprops_ptr->pileheight[isrc] * pileprops_ptr->majorrad[isrc]
-			    * pileprops_ptr->minorrad[isrc];
+					* pileprops_ptr->minorrad[isrc];
 
 	if (fluxprops->no_of_sources > 0)
 		for (isrc = 0; isrc < fluxprops->no_of_sources; isrc++)
 			totalvolume += 0.5 * PI * fluxprops->influx[isrc] * fluxprops->majorrad[isrc]
-			    * fluxprops->minorrad[isrc] * 0.5 * (fluxprops->end_time[isrc] - //0.5 for linear decrease
-			        fluxprops->start_time[isrc]);
+					* fluxprops->minorrad[isrc] * 0.5 * (fluxprops->end_time[isrc] - //0.5 for linear decrease
+							fluxprops->start_time[isrc]);
 
 	double doubleswap = pow(totalvolume, 1.0 / 3.0);
 
@@ -363,10 +363,10 @@ void Read_data(int myid, MatProps* matprops_ptr, PileProps* pileprops_ptr, StatP
 		statprops_ptr->hxyminmax = matprops_ptr->MAX_NEGLIGIBLE_HEIGHT * 10.0;
 	else if (statprops_ptr->hxyminmax <= 0.0) {
 		printf(
-		    "bogus edge height=%g read in from simulation.data\n \
+				"bogus edge height=%g read in from simulation.data\n \
             (edge height = -1 is the flag for using the default height)\n \
             Exitting!!\n",
-		    statprops_ptr->hxyminmax);
+				statprops_ptr->hxyminmax);
 		exit(0);
 	}
 	statprops_ptr->hxyminmax /= matprops_ptr->HEIGHT_SCALE;
@@ -459,7 +459,7 @@ void Read_data(int myid, MatProps* matprops_ptr, PileProps* pileprops_ptr, StatP
 		Get_raster_categories(&nummat);
 		if (nummat != matprops_ptr->material_count) {
 			printf("frict.data has %d materials but material map has %d, aborting\n",
-			    matprops_ptr->material_count, nummat);
+					matprops_ptr->material_count, nummat);
 			exit(0);
 		}
 	}
@@ -500,7 +500,7 @@ void Read_data(int myid, MatProps* matprops_ptr, PileProps* pileprops_ptr, StatP
 //this reads in the funky grid, ignoring the material properties at the 
 //end of the file, those are now read from frict.data in Read_data()
 void Read_grid(int myid, int numprocs, HashTable** NodeTable, HashTable** ElemTable,
-    MatProps* matprops_ptr, OutLine* outline_ptr) {
+		MatProps* matprops_ptr, OutLine* outline_ptr) {
 	int Node_Num, Elem_Num;
 
 	int NODE_TABLE_SIZE = 400000;
@@ -532,16 +532,16 @@ void Read_grid(int myid, int numprocs, HashTable** NodeTable, HashTable** ElemTa
 	freadI(fp, &version);
 
 	switch (version) {
-		case 20061109:
-			DoublesFromFloats = 1;
-			break;
-		case 20061110:
-			DoublesFromFloats = 0;
-			break;
-		default:
-			printf("Read_data() does not recognize binary funkyxxxx.inp version %d\n", version);
-			exit(1);
-			break;
+	case 20061109:
+		DoublesFromFloats = 1;
+		break;
+	case 20061110:
+		DoublesFromFloats = 0;
+		break;
+	default:
+		printf("Read_data() does not recognize binary funkyxxxx.inp version %d\n", version);
+		exit(1);
+		break;
 	}
 
 	freadI(fp, &Node_Num);
@@ -632,7 +632,7 @@ void Read_grid(int myid, int numprocs, HashTable** NodeTable, HashTable** ElemTa
 			freadI(fp, &(neighbor_proc[j]));  //--read the neighbor info
 
 			if (neighbor_proc[j] != -1)  //--if there is neighbor(-1 means the edge is bound)
-			    {
+					{
 				if (neighbor_proc[j] != myid) //--the neighbor belongs to other proc
 					interflag = 1; //--switch is used for avoiding nominating neighbor twice
 
@@ -655,7 +655,7 @@ void Read_grid(int myid, int numprocs, HashTable** NodeTable, HashTable** ElemTa
 			freadI(fp, &temp2);
 
 			if (temp2 != -1) //--there is bound constraint
-			    {
+					{
 				if (!bcf)
 					bcptr = new BC();
 				bcptr->type[j] = 1; //--intialize type
@@ -676,7 +676,7 @@ void Read_grid(int myid, int numprocs, HashTable** NodeTable, HashTable** ElemTa
 			freadI(fp, &temp2);
 
 			if (temp2 != -1) //--there is bound constraint
-			    {
+					{
 				if (!bcf)
 					bcptr = new BC();
 				if (bcptr->type[j] == 0)
@@ -704,7 +704,7 @@ void Read_grid(int myid, int numprocs, HashTable** NodeTable, HashTable** ElemTa
 		if (!bcf)
 			bcptr = NULL; //--this element is not on the bound
 		Quad9P = new Element(nodes, neigh, neighbor_proc, bcptr, material, elm_loc, pile_height, myid,
-		    opposite_brother);
+				opposite_brother);
 		(*ElemTable)->add(nodes[8], Quad9P);
 		Quad9P->find_positive_x_side(*NodeTable);
 		Quad9P->calculate_dx(*NodeTable);
@@ -726,9 +726,9 @@ void Read_grid(int myid, int numprocs, HashTable** NodeTable, HashTable** ElemTa
 		DX = dx[1];
 
 	REFINE_LEVEL = Quad9P->get_gen()
-	    + ceil(
-	        log(DX * (matprops_ptr->number_of_cells_across_axis) / (matprops_ptr->smallest_axis))
-	            / log(2.0));
+			+ ceil(
+					log(DX * (matprops_ptr->number_of_cells_across_axis) / (matprops_ptr->smallest_axis))
+							/ log(2.0));
 
 	//(mdj)2007-04-12 if(REFINE_LEVEL<3) REFINE_LEVEL=3;
 	if (REFINE_LEVEL < 0)
@@ -771,7 +771,19 @@ void Read_grid(int myid, int numprocs, HashTable** NodeTable, HashTable** ElemTa
 		}
 
 #ifdef MAX_DEPTH_MAP
-	outline_ptr->init(Quad9P->get_dx(), REFINE_LEVEL - Quad9P->get_gen(), xminmax, yminmax);
+	double ewresol;
+	double nsresol;
+	double resx;
+	double resy;
+
+	// Get e-w and n-s resolutions from the GisApi static gis_grid structure
+	Get_grid_ewresol(&ewresol);
+	Get_grid_nsresol(&nsresol);
+
+	resx = ewresol / matprops_ptr->LENGTH_SCALE;
+	resy = nsresol / matprops_ptr->LENGTH_SCALE;
+
+	outline_ptr->init(resx, resy, xminmax, yminmax);
 #endif
 
 	delete[] value;

@@ -54,11 +54,11 @@ float **alloc_float_matrix(int rows, int cols);
 int free_char_matrix(char **m);
 int free_float_matrix(float **m);
 void get_grid(double resolution, double xmin, double xmax, double ymin, double ymax, float** ingrid,
-    double* outgrid);
+		double* outgrid);
 void get_int_grid(double resolution, double xmin, double xmax, double ymin, double ymax,
-    char** ingrid, int* outgrid);
+		char** ingrid, int* outgrid);
 void get_rgb_grid(double resolution, double xmin, double xmax, double ymin, double ymax,
-    unsigned char** ingrid, unsigned char* r, unsigned char* g, unsigned char* b);
+		unsigned char** ingrid, unsigned char* r, unsigned char* g, unsigned char* b);
 char **set_cats(GisCats& g_cats);
 
 int print_grid();
@@ -152,7 +152,7 @@ void Set_vector_scale(double scale) {
 }
 
 int Initialize_GIS_data(char* GISDbase, char* location, char* mapset, char* mapdata,
-    int gis_format) {
+		int gis_format) {
 	char gisPath[200];
 	int ierr = 1;
 
@@ -266,7 +266,7 @@ int Update_GIS_data(char* GISDbase, char* location, char* mapset, char* raster_f
 				for (int col = 0; row < ncols; col++)
 					if (fabs(gis_grid2.elev[row][col] - gis_grid.elev[row][col]) > 1.0)
 						printf("row=%d, col=%d, elevation old=%g new=%g\n", row, col, gis_grid.elev[row][col],
-						    gis_grid2.elev[row][col]);
+								gis_grid2.elev[row][col]);
 
 			return 0;
 		}
@@ -690,12 +690,12 @@ double interpolate_bilinear_at(double resolution, double x, double y, float** in
 }
 
 int Get_image(double resolution, double x, double y, unsigned char* r, unsigned char* g,
-    unsigned char* b) {
+		unsigned char* b) {
 	int row, col;
 	unsigned char i;
 
 	if (x >= gis_image.ghead.xmin && x <= gis_image.ghead.xmax && y >= gis_image.ghead.ymin
-	    && y <= gis_image.ghead.ymax) {
+			&& y <= gis_image.ghead.ymax) {
 		x = (x - gis_image.ghead.xmin) / gis_image.ghead.resolution;
 		y = (gis_image.ghead.ymax - y) / gis_image.ghead.resolution;
 		col = (int) x;
@@ -716,7 +716,7 @@ int Get_raster_id(double resolution, double x, double y, int* category_id) {
 	int row, col;
 
 	if (x >= gis_rast.ghead.xmin && x <= gis_rast.ghead.xmax && y >= gis_rast.ghead.ymin
-	    && y <= gis_rast.ghead.ymax) {
+			&& y <= gis_rast.ghead.ymax) {
 		x = (x - gis_rast.ghead.xmin) / gis_rast.ghead.resolution;
 		y = (gis_rast.ghead.ymax - y) / gis_rast.ghead.resolution;
 		col = (int) x;
@@ -740,7 +740,7 @@ int Get_elevation(double resolution, double x, double y, double* elev) {
 	}
 
 	if (x >= gis_grid.ghead.xmin && x <= gis_grid.ghead.xmax && y >= gis_grid.ghead.ymin
-	    && y <= gis_grid.ghead.ymax) {
+			&& y <= gis_grid.ghead.ymax) {
 		x = (x - gis_grid.ghead.xmin) / gis_grid.ghead.resolution;
 		y = (gis_grid.ghead.ymax - y) / gis_grid.ghead.resolution;
 		if ((int) y >= gis_grid.ghead.nrows - 1 || (int) x >= gis_grid.ghead.ncols - 1) {
@@ -766,7 +766,7 @@ int Get_slope(double resolution, double x, double y, double* xslope, double* ysl
 	}
 
 	if (x >= gis_grid.ghead.xmin && x <= gis_grid.ghead.xmax && y >= gis_grid.ghead.ymin
-	    && y <= gis_grid.ghead.ymax) {
+			&& y <= gis_grid.ghead.ymax) {
 		//		row = ( gis_grid.ghead.ymax - y ) / gis_grid.ghead.resolution;
 		//		col = ( x - gis_grid.ghead.xmin ) / gis_grid.ghead.resolution;
 		//		*xslope = gis_grid.xslope[row][col];
@@ -808,7 +808,7 @@ int Get_curvature(double resolution, double x, double y, double* xcurv, double* 
 	}
 
 	if (x >= gis_grid.ghead.xmin && x <= gis_grid.ghead.xmax && y >= gis_grid.ghead.ymin
-	    && y <= gis_grid.ghead.ymax) {
+			&& y <= gis_grid.ghead.ymax) {
 		row = (int) ((gis_grid.ghead.ymax - y) / gis_grid.ghead.resolution);
 		if (row == 0)
 			row++;
@@ -821,29 +821,29 @@ int Get_curvature(double resolution, double x, double y, double* xcurv, double* 
 			col--;
 		if (col >= (gis_grid.ghead.ncols - 3) || row >= gis_grid.ghead.nrows - 3) {
 			*xcurv = ((gis_grid.xslope[row - 1][col + 1] - gis_grid.xslope[row - 1][col - 1])
-			    + 2 * (gis_grid.xslope[row][col + 1] - gis_grid.xslope[row][col - 1])
-			    + (gis_grid.xslope[row + 1][col + 1] - gis_grid.xslope[row + 1][col - 1]))
-			    / (8 * gis_grid.ghead.resolution);
+					+ 2 * (gis_grid.xslope[row][col + 1] - gis_grid.xslope[row][col - 1])
+					+ (gis_grid.xslope[row + 1][col + 1] - gis_grid.xslope[row + 1][col - 1]))
+					/ (8 * gis_grid.ghead.resolution);
 
 			*ycurv = ((gis_grid.yslope[row - 1][col - 1] - gis_grid.yslope[row + 1][col - 1])
-			    + 2 * (gis_grid.yslope[row - 1][col] - gis_grid.yslope[row + 1][col])
-			    + (gis_grid.yslope[row - 1][col + 1] - gis_grid.yslope[row + 1][col + 1]))
-			    / (8 * gis_grid.ghead.resolution);
+					+ 2 * (gis_grid.yslope[row - 1][col] - gis_grid.yslope[row + 1][col])
+					+ (gis_grid.yslope[row - 1][col + 1] - gis_grid.yslope[row + 1][col + 1]))
+					/ (8 * gis_grid.ghead.resolution);
 		} else {
 			for (i = 0; i < 2; i++) {
 				for (j = 0; j < 2; j++) {
 					xxcurv[i][j] = ((gis_grid.xslope[row + i - 1][col + j + 1]
-					    - gis_grid.xslope[row + i - 1][col + j - 1])
-					    + 2 * (gis_grid.xslope[row + i][col + j + 1] - gis_grid.xslope[row + i][col + j - 1])
-					    + (gis_grid.xslope[row + i + 1][col + j + 1]
-					        - gis_grid.xslope[row + i + 1][col + j - 1]))
-					    / (8 * (float) gis_grid.ghead.resolution);
+							- gis_grid.xslope[row + i - 1][col + j - 1])
+							+ 2 * (gis_grid.xslope[row + i][col + j + 1] - gis_grid.xslope[row + i][col + j - 1])
+							+ (gis_grid.xslope[row + i + 1][col + j + 1]
+									- gis_grid.xslope[row + i + 1][col + j - 1]))
+							/ (8 * (float) gis_grid.ghead.resolution);
 					yycurv[i][j] = ((gis_grid.yslope[row + i - 1][col + j - 1]
-					    - gis_grid.yslope[row + i + 1][col + j - 1])
-					    + 2 * (gis_grid.yslope[row + i - 1][col + j] - gis_grid.yslope[row + i + 1][col + j])
-					    + (gis_grid.yslope[row + i - 1][col + j + 1]
-					        - gis_grid.yslope[row + i + 1][col + j + 1]))
-					    / (8 * (float) gis_grid.ghead.resolution);
+							- gis_grid.yslope[row + i + 1][col + j - 1])
+							+ 2 * (gis_grid.yslope[row + i - 1][col + j] - gis_grid.yslope[row + i + 1][col + j])
+							+ (gis_grid.yslope[row + i - 1][col + j + 1]
+									- gis_grid.yslope[row + i + 1][col + j + 1]))
+							/ (8 * (float) gis_grid.ghead.resolution);
 				}
 			}
 			x1 = x - gis_grid.ghead.xmin - gis_grid.ghead.resolution * (double) col;
@@ -860,17 +860,27 @@ int Get_curvature(double resolution, double x, double y, double* xcurv, double* 
 	return 0;
 }
 
+int Get_grid_ewresol(double *ewresol) {
+	*ewresol = gis_grid.ghead.wresolution;
+	return 0;
+}
+
+int Get_grid_nsresol(double *nsresol) {
+	*nsresol = gis_grid.ghead.resolution;
+	return 0;
+}
+
 /***************************************************************/
 /* GETTING VALUES FOR MULTIPLE POINTS */
 /***************************************************************/
 int Get_image_array(double* resolution, double* x, double* y, unsigned char* r, unsigned char* g,
-    unsigned char* b, int number_of_locations) {
+		unsigned char* b, int number_of_locations) {
 	double x1, y1;
 	int row, col;
 	int i, j;
 	for (i = 0; i < number_of_locations; i++) {
 		if (x[i] >= gis_image.ghead.xmin && x[i] <= gis_image.ghead.xmax && y[i] >= gis_image.ghead.ymin
-		    && y[i] <= gis_image.ghead.ymax) {
+				&& y[i] <= gis_image.ghead.ymax) {
 			x1 = (x[i] - gis_image.ghead.xmin) / gis_image.ghead.resolution;
 			y1 = (gis_image.ghead.ymax - y[i]) / gis_image.ghead.resolution;
 
@@ -890,13 +900,13 @@ int Get_image_array(double* resolution, double* x, double* y, unsigned char* r, 
 }
 
 int Get_raster_id_array(double* resolution, double* x, double* y, int* category_id,
-    int number_of_locations) {
+		int number_of_locations) {
 	double x1, y1;
 	int row, col;
 	int i;
 	for (i = 0; i < number_of_locations; i++) {
 		if (x[i] >= gis_rast.ghead.xmin && x[i] <= gis_rast.ghead.xmax && y[i] >= gis_rast.ghead.ymin
-		    && y[i] <= gis_rast.ghead.ymax) {
+				&& y[i] <= gis_rast.ghead.ymax) {
 			x1 = (x[i] - gis_rast.ghead.xmin) / gis_rast.ghead.resolution;
 			y1 = (gis_rast.ghead.ymax - y[i]) / gis_rast.ghead.resolution;
 
@@ -913,7 +923,7 @@ int Get_raster_id_array(double* resolution, double* x, double* y, int* category_
 }
 
 int Get_elevation_array(double* resolution, double* x, double* y, double* elev,
-    int number_of_locations) {
+		int number_of_locations) {
 	double x1, y1;
 	int i;
 	int status;
@@ -926,7 +936,7 @@ int Get_elevation_array(double* resolution, double* x, double* y, double* elev,
 
 	for (i = 0; i < number_of_locations; i++) {
 		if (x[i] >= gis_grid.ghead.xmin && x[i] <= gis_grid.ghead.xmax && y[i] >= gis_grid.ghead.ymin
-		    && y[i] <= gis_grid.ghead.ymax) {
+				&& y[i] <= gis_grid.ghead.ymax) {
 			//			row = ( gis_grid.ghead.ymax - y[i] ) / gis_grid.ghead.resolution;
 			//			col = ( x[i] - gis_grid.ghead.xmin ) / gis_grid.ghead.resolution;
 			//			elev[i] = gis_grid.elev[row][col];
@@ -942,7 +952,7 @@ int Get_elevation_array(double* resolution, double* x, double* y, double* elev,
 }
 
 int Get_slope_array(double* resolution, double* x, double* y, double* xslope, double* yslope,
-    int number_of_locations) {
+		int number_of_locations) {
 	int row, col;
 	int i, status;
 
@@ -954,7 +964,7 @@ int Get_slope_array(double* resolution, double* x, double* y, double* xslope, do
 
 	for (i = 0; i < number_of_locations; i++) {
 		if (x[i] >= gis_grid.ghead.xmin && x[i] <= gis_grid.ghead.xmax && y[i] >= gis_grid.ghead.ymin
-		    && y[i] <= gis_grid.ghead.ymax) {
+				&& y[i] <= gis_grid.ghead.ymax) {
 			row = (int) ((gis_grid.ghead.ymax - y[i]) / gis_grid.ghead.resolution);
 			col = (int) ((x[i] - gis_grid.ghead.xmin) / gis_grid.ghead.resolution);
 			xslope[i] = gis_grid.xslope[row][col];
@@ -965,7 +975,7 @@ int Get_slope_array(double* resolution, double* x, double* y, double* xslope, do
 }
 
 int Get_curvature_array(double* resolution, double* x, double* y, double* xcurv, double* ycurv,
-    int number_of_locations) {
+		int number_of_locations) {
 	int row, col;
 	int i, status;
 
@@ -981,7 +991,7 @@ int Get_curvature_array(double* resolution, double* x, double* y, double* xcurv,
 	}
 	for (i = 0; i < number_of_locations; i++) {
 		if (x[i] >= gis_grid.ghead.xmin && x[i] <= gis_grid.ghead.xmax && y[i] >= gis_grid.ghead.ymin
-		    && y[i] <= gis_grid.ghead.ymax) {
+				&& y[i] <= gis_grid.ghead.ymax) {
 			row = (int) ((gis_grid.ghead.ymax - y[i]) / gis_grid.ghead.resolution);
 			col = (int) ((x[i] - gis_grid.ghead.xmin) / gis_grid.ghead.resolution);
 			xcurv[i] = gis_grid.xcurv[row][col];
@@ -992,7 +1002,7 @@ int Get_curvature_array(double* resolution, double* x, double* y, double* xcurv,
 }
 
 int Get_elevation_grid(double resolution, double xmin, double xmax, double ymin, double ymax,
-    double* elev) {
+		double* elev) {
 	int status;
 
 	if (gis_grid.elev == 0) {
@@ -1006,19 +1016,19 @@ int Get_elevation_grid(double resolution, double xmin, double xmax, double ymin,
 }
 
 int Get_raster_id_grid(double resolution, double xmin, double xmax, double ymin, double ymax,
-    int* rIds) {
+		int* rIds) {
 	get_int_grid(resolution, xmin, xmax, ymin, ymax, gis_rast.cvals, rIds);
 	return 0;
 }
 
 int Get_image_grid(double resolution, double xmin, double xmax, double ymin, double ymax,
-    unsigned char* r, unsigned char* g, unsigned char* b) {
+		unsigned char* r, unsigned char* g, unsigned char* b) {
 	get_rgb_grid(resolution, xmin, xmax, ymin, ymax, gis_image.ivals, r, g, b);
 	return 0;
 }
 
 int Get_slope_grid(double resolution, double xmin, double xmax, double ymin, double ymax,
-    double* slope) {
+		double* slope) {
 	int status;
 
 	if (gis_grid.slope == 0) {
@@ -1032,7 +1042,7 @@ int Get_slope_grid(double resolution, double xmin, double xmax, double ymin, dou
 }
 
 int Get_curvature_grid(double resolution, double xmin, double xmax, double ymin, double ymax,
-    double* xcurv, double* ycurv) {
+		double* xcurv, double* ycurv) {
 	int status;
 
 	if (gis_grid.slope == 0) {
@@ -1058,7 +1068,7 @@ int Get_curvature_grid(double resolution, double xmin, double xmax, double ymin,
 /***************************************************************/
 
 void get_grid(double resolution, double xmin, double xmax, double ymin, double ymax, float** ingrid,
-    double* outgrid) {
+		double* outgrid) {
 	int row, col, i, j, li;
 	int irow, icol; /* initial row and column */
 	int frow, fcol; /* final row and column */
@@ -1102,7 +1112,7 @@ void get_grid(double resolution, double xmin, double xmax, double ymin, double y
 }
 
 void get_int_grid(double resolution, double xmin, double xmax, double ymin, double ymax,
-    char** ingrid, int* outgrid) {
+		char** ingrid, int* outgrid) {
 	int row, col, i, j, li;
 	int irow, icol; /* initial row and column */
 	int frow, fcol; /* final row and column */
@@ -1146,7 +1156,7 @@ void get_int_grid(double resolution, double xmin, double xmax, double ymin, doub
 }
 
 void get_rgb_grid(double resolution, double xmin, double xmax, double ymin, double ymax,
-    unsigned char** ingrid, unsigned char* r, unsigned char* g, unsigned char* b) {
+		unsigned char** ingrid, unsigned char* r, unsigned char* g, unsigned char* b) {
 	int row, col, i, j, li;
 	int irow, icol; /* initial row and column */
 	int frow, fcol; /* final row and column */
@@ -1349,18 +1359,18 @@ int calculate_slope() {
 	for (row = 1; row < gis_grid.ghead.nrows - 1; row++) {
 		for (col = 1; col < gis_grid.ghead.ncols - 1; col++) {
 			gis_grid.xslope[row][col] = ((gis_grid.elev[row - 1][col + 1]
-			    - gis_grid.elev[row - 1][col - 1])
-			    + 2 * (gis_grid.elev[row][col + 1] - gis_grid.elev[row][col - 1])
-			    + (gis_grid.elev[row + 1][col + 1] - gis_grid.elev[row + 1][col - 1]))
-			    / (8 * (float) gis_grid.ghead.resolution);
+					- gis_grid.elev[row - 1][col - 1])
+					+ 2 * (gis_grid.elev[row][col + 1] - gis_grid.elev[row][col - 1])
+					+ (gis_grid.elev[row + 1][col + 1] - gis_grid.elev[row + 1][col - 1]))
+					/ (8 * (float) gis_grid.ghead.resolution);
 			gis_grid.yslope[row][col] = ((gis_grid.elev[row - 1][col - 1]
-			    - gis_grid.elev[row + 1][col - 1])
-			    + 2 * (gis_grid.elev[row - 1][col] - gis_grid.elev[row + 1][col])
-			    + (gis_grid.elev[row - 1][col + 1] - gis_grid.elev[row + 1][col + 1]))
-			    / (8 * (float) gis_grid.ghead.resolution);
+					- gis_grid.elev[row + 1][col - 1])
+					+ 2 * (gis_grid.elev[row - 1][col] - gis_grid.elev[row + 1][col])
+					+ (gis_grid.elev[row - 1][col + 1] - gis_grid.elev[row + 1][col + 1]))
+					/ (8 * (float) gis_grid.ghead.resolution);
 			gis_grid.slope[row][col] = (float) sqrt(
-			    gis_grid.xslope[row][col] * gis_grid.xslope[row][col]
-			        + gis_grid.yslope[row][col] * gis_grid.yslope[row][col]);
+					gis_grid.xslope[row][col] * gis_grid.xslope[row][col]
+							+ gis_grid.yslope[row][col] * gis_grid.yslope[row][col]);
 		}
 	}
 	for (col = 1; col < gis_grid.ghead.ncols - 1; col++) {
@@ -1404,15 +1414,15 @@ int calculate_curvature() {
 	for (row = 1; row < gis_grid.ghead.nrows - 1; row++) {
 		for (col = 1; col < gis_grid.ghead.ncols - 1; col++) {
 			gis_grid.xcurv[row][col] = ((gis_grid.slope[row - 1][col + 1]
-			    - gis_grid.slope[row - 1][col - 1])
-			    + 2 * (gis_grid.slope[row][col + 1] - gis_grid.slope[row][col - 1])
-			    + (gis_grid.slope[row + 1][col + 1] - gis_grid.slope[row + 1][col - 1]))
-			    / (8 * (float) gis_grid.ghead.resolution);
+					- gis_grid.slope[row - 1][col - 1])
+					+ 2 * (gis_grid.slope[row][col + 1] - gis_grid.slope[row][col - 1])
+					+ (gis_grid.slope[row + 1][col + 1] - gis_grid.slope[row + 1][col - 1]))
+					/ (8 * (float) gis_grid.ghead.resolution);
 			gis_grid.ycurv[row][col] = ((gis_grid.slope[row - 1][col - 1]
-			    - gis_grid.slope[row + 1][col - 1])
-			    + 2 * (gis_grid.slope[row - 1][col] - gis_grid.slope[row + 1][col])
-			    + (gis_grid.slope[row - 1][col + 1] - gis_grid.slope[row + 1][col + 1]))
-			    / (8 * (float) gis_grid.ghead.resolution);
+					- gis_grid.slope[row + 1][col - 1])
+					+ 2 * (gis_grid.slope[row - 1][col] - gis_grid.slope[row + 1][col])
+					+ (gis_grid.slope[row - 1][col + 1] - gis_grid.slope[row + 1][col + 1]))
+					/ (8 * (float) gis_grid.ghead.resolution);
 		}
 	}
 	for (col = 1; col < gis_grid.ghead.ncols - 1; col++) {
