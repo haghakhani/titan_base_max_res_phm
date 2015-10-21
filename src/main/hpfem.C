@@ -161,6 +161,11 @@ int main(int argc, char *argv[]) {
 		grass_sites_proc_output(BT_Elem_Ptr, BT_Node_Ptr, myid, &matprops, &timeprops);
 	}
 
+
+	vector<int> number_of_element_local;
+
+	number_of_element_local.push_back(num_nonzero_elem(BT_Elem_Ptr));
+
 	/*
 	 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -222,6 +227,8 @@ int main(int argc, char *argv[]) {
 
 		step(BT_Elem_Ptr, BT_Node_Ptr, myid, numprocs, &matprops, &timeprops, &pileprops, &fluxprops,
 		    &statprops, &order_flag, &outline, &discharge, adaptflag);
+
+		number_of_element_local.push_back(num_nonzero_elem(BT_Elem_Ptr));
 
 		/*
 		 * save a restart file 
@@ -355,6 +362,23 @@ int main(int argc, char *argv[]) {
 			outline2.output(&matprops, &statprops);
 	} else
 		outline.output(&matprops, &statprops);
+
+	MPI_Barrier(MPI_COMM_WORLD);
+
+		int* number_of_element_global;
+		if (myid == 0)
+			number_of_element_global = new int[timeprops.iter];
+
+		MPI_Reduce(&number_of_element_local.front(), number_of_element_global, timeprops.iter, MPI_INT,
+		MPI_SUM, 0, MPI_COMM_WORLD);
+
+		if (myid == 0) {
+			ofstream output_file("number_of_elements.data", ofstream::out);
+			for (int i = 0; i < timeprops.iter; ++i)
+				output_file << number_of_element_global[i] << endl;
+			delete[] number_of_element_global;
+
+		}
 
 #ifdef PERFTEST  
 	long m = element_counter, ii;

@@ -83,6 +83,9 @@ void delete_ghost_elms(HashTable* El_Table, int myid);
 void calc_edge_states(HashTable* El_Table, HashTable* NodeTable, MatProps* matprops_ptr,
     TimeProps* timeprops_ptr, int myid, int* order_flag, double *outflow);
 
+//! This function counts the number of elements
+int num_nonzero_elem(HashTable *El_Table);
+
 //! c++ sgn function 
 inline double c_sgn(double zz) {
 	double sgn;
