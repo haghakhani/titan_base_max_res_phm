@@ -119,35 +119,12 @@ c     the bed friction force for fast moving flow
      $        dmax1(g(3)*Uvec(1)+VxVy(1)*Uvec(2)*curv(1),0.0d0)
      $        *tanbed
 
-         if(IF_STOPPED.eq.2.and.1.eq.0) then
-c     the bed friction force for stopped or nearly stopped flow
-
-c     the static friction force is LESS THAN or equal to the friction
-c     coefficient times the normal force but it can NEVER exceed the 
-c     NET force it is opposing
-
-c     maximum friction force the bed friction can support
-            forcebedmax=g(3)*Uvec(1)*tanbed
-
-c     the NET force the bed friction force is opposing 
-            forcebedequil=forcegrav
-c     $           -kactxy*g(3)*Uvec(1)*dUdx(1)
-     $           -forceintx
-
-c     the "correct" stopped or nearly stopped flow bed friction force 
-c     (this force is not entirely "correct" it will leave a "negligible"
-c     (determined by stopping criteria) amount of momentum in the cell
-            forcebedx=sgn(forcebedequil,dmin1(forcebedmax,
-     $           dabs(forcebedx)+dabs(forcebedequil)))
-c     forcebedx=sgn(forcebed2,dmin1(forcebed1,dabs(forcebed2)))
-
-c     not really 1 but this makes friction statistics accurate
-            unitvx=1.0
-c     else
-            
+         if (abs(Ustore(2) + dt*forcegrav)
+     $    .gt.abs(dt*(forcebedx+forceintx))) then
+            Ustore(2) = Ustore(2) + dt*(forcegrav -forcebedx -forceintx)
+         else
+            Ustore(2)=0.d0
          endif
-
-         Ustore(2) = Ustore(2) + dt*(forcegrav -forcebedx -forceintx)
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     y direction source terms
@@ -165,26 +142,13 @@ c     the bed friction force for fast moving flow
          forcebedy=unitvy
      $        *dmax1(g(3)*Uvec(1)+VxVy(2)*Uvec(3)*curv(2),0.0d0)
      $        *tanbed
-         if(IF_STOPPED.eq.2.and.1.eq.0) then
-c     the bed friction force for stopped or nearly stopped flow
 
-c     the NET force the bed friction force is opposing 
-            forcebedequil=forcegrav
-c     $           -kactxy*g(3)*Uvec(1)*dUdy(1)
-     $           -forceinty
-
-c     the "correct" stopped or nearly stopped flow bed friction force 
-c     (this force is not entirely "correct" it will leave a "negligible"
-c     (determined by stopping criteria) amount of momentum in the cell
-            forcebedy=sgn(forcebedequil,dmin1(forcebedmax,
-     $           dabs(forcebedy)+dabs(forcebedequil)))
-
-c     not really 1 but this makes friction statistics accurate
-            unitvy=1.0
-c         else
+         if (abs(Ustore(3) + dt*forcegrav)
+     $    .gt.abs(dt*(forcebedy+forceinty))) then
+            Ustore(3) = Ustore(3) + dt*(forcegrav -forcebedy -forceinty)
+         else
+            Ustore(3)=0.d0
          endif
-
-         Ustore(3) = Ustore(3) + dt*(forcegrav -forcebedy -forceinty)
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c (erosion terms) this is Camil's logic, Keith changed some variable 
